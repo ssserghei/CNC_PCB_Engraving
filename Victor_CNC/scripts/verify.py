@@ -69,7 +69,7 @@ if __name__ == '__main__':
     for s in ('top', 'bottom'):
         cu, iso = geo[s]
         if src: iso = cut_from_gcode(os.path.join(src, {'top': '01_Top_Isolation_V30.nc', 'bottom': '04_Bottom_Isolation_V30.nc'}[s]))
-        for w in (CUT, 0.227): check(f'{s} w={w:.3f}', cu, iso, w, None)
+        for w in (CUT, 0.254): check(f'{s} w={w:.3f}', cu, iso, w, None)
     if src:
         h = res['holes']; t = lambda ks, z: {(p[0], p[1]): z for k in ks for p in h[k]}
         check_holes(os.path.join(src, '02_Drill_0.3_Vias.nc'), t(('via',), -1.85))

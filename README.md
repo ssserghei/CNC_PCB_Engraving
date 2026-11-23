@@ -64,9 +64,9 @@ Board data from the Gerber files:
 | Copper | 35 µm |
 | Blank | board + 12 mm in X and + 8 mm in Y on each side = 123.1 × 87.1 mm minimum |
 | Spindle | `S1000`, as in the reference project |
-| Feeds | V-bit 120 / 20 and end mill 100 / 30 mm/min from the reference; drills 30 (0.3 mm) and 60 (1.0 mm) mm/min are estimates |
-| Isolation depth | 0.10 mm in one pass (the reference engraving used 0.05 mm) |
-| Flatness | the V-bit bites into copper tracks below about 0.18 mm depth: use a height map, or a flat and well-fixed blank |
+| Feeds | V-bit 90 / 20 mm/min (reference 120 / 20, XY lowered by a quarter on 2026-11-23); end mill 100 / 30 from the reference; drills 30 (0.3 mm) and 60 (1.0 mm) mm/min are estimates |
+| Isolation depth | 0.05 mm in one pass, as in the reference (decision 2026-11-23, before that 0.10 mm) |
+| Flatness | copper is 0.035 mm thick, so at 0.05 mm depth a spot only 0.015 mm below Z0 stays uncut: **a height map is needed** unless the blank is that flat. The V-bit bites into copper tracks below about 0.18 mm depth  |
 
 ## 3. Tools
 
@@ -79,7 +79,7 @@ Board data from the Gerber files:
 
 The `.fctb` files are in `Victor_CNC/ToolBits/`.
 
-Cut width of the V-bit = 0.2 + 2 · depth · tan 15°: 0.227 mm at 0.05 mm, **0.254 mm at 0.10 mm**, 0.298 mm (the gap) at 0.18 mm.
+Cut width of the V-bit = 0.2 + 2 · depth · tan 15°: **0.227 mm at 0.05 mm**, 0.254 mm at 0.10 mm, 0.298 mm (the gap) at 0.18 mm.
 
 ## 4. CAM jobs
 
@@ -87,10 +87,10 @@ Coordinates: X0 Y0 = lower left corner of the board, Z0 = copper surface. G54 in
 
 | # | Task | Tool | Depth | Feed XY / Z, mm/min | G-code | Time (FreeCAD estimate) |
 |---|---|---|---|---|---|---|
-| 1 | Test rectangle + isolation, top | V-bit | −0.10 | 120 / 20 | `01_Top_Isolation_V30.nc` | 56 min |
+| 1 | Test rectangle + isolation, top | V-bit | −0.05 | 90 / 20 | `01_Top_Isolation_V30.nc` | 68 min |
 | 2 | Vias, 32 holes | drill 0.3 | −1.85 | — / 30 | `02_Drill_0.3_Vias.nc` | not estimated |
 | 3 | Connectors, terminals, R20 / R21 (160 holes) and 2 alignment holes | drill 1.0 | −2.1 / −6.0 | — / 60 | `03_Drill_1.0_Holes.nc` | not estimated |
-| 1 | Test rectangle + isolation, bottom | V-bit | −0.10 | 120 / 20 | `04_Bottom_Isolation_V30.nc` | 26 min |
+| 1 | Test rectangle + isolation, bottom | V-bit | −0.05 | 90 / 20 | `04_Bottom_Isolation_V30.nc` | 32 min |
 | 4 | Q1 / Q2 holes, then contour with 8 tabs | end mill 2 mm | −2.0, then −1.85 step 0.3 | 100 / 30 | `05_Contour_2mm.nc` | 25 min |
 
 File numbers give the machining order; the first column is the task.
@@ -110,7 +110,7 @@ File numbers give the machining order; the first column is the task.
 
 ## 5. Machining order
 
-At the `M0` pause of files 01 and 04 look at the rectangle: the groove must be continuous and equally wide (0.25 mm) all
+At the `M0` pause of files 01 and 04 look at the rectangle: the groove must be continuous and equally wide (0.23 mm) all
 round, and the multimeter must show no contact between the copper inside and outside of it. If not, stop the program,
 correct the fixing or Z0 (or use a height map) and start the file again. If yes, resume; the spindle restarts by itself.
 
@@ -129,9 +129,9 @@ Safe heights: isolation moves at 1.5 mm, everything else at 5 mm. Keep clamps ou
 | Check | Result |
 |---|---|
 | Gerber copper + drills against the netlist | no shorts, no open nets |
-| Top, G-code subtracted from a full copper blank, cut 0.254 mm | 192 islands, 0 shorts, 0 breaks, no bite into copper |
-| Bottom, same check | 175 islands, 0 shorts, 0 breaks, 0.18 mm² bite at the 0.105 mm place (same net) |
-| Same at 0.227 mm cut (0.05 mm depth) | 0 shorts, 0 breaks on both sides |
+| Top, G-code subtracted from a full copper blank, cut 0.227 mm | 192 islands, 0 shorts, 0 breaks, no bite into copper |
+| Bottom, same check | 175 islands, 0 shorts, 0 breaks, 0.16 mm² bite at the 0.105 mm place (same net) |
+| Same at 0.254 mm cut (0.10 mm depth) | 0 shorts, 0 breaks on both sides |
 | Hole positions and depths, files 02, 03, 05 | 32, 162 and 6 holes; none extra, missing or of wrong depth |
 | Test rectangle, files 01 and 04 | one closed line, (−0.5, −0.5) to (99.56, 71.62), one `M0` before the isolation |
 | Rapids | no `G0` below Z0 in the isolation files |

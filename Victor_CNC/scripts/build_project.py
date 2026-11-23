@@ -135,7 +135,7 @@ def run():
         return out
 
     def test_pass(j, tc, side):
-        o = op(GE, j, tc, 'Test_Outline_' + side, 0, -0.10, 0.10, 1.5, 0.5); o.BaseShapes = [tst]
+        o = op(GE, j, tc, 'Test_Outline_' + side, 0, -0.05, 0.05, 1.5, 0.5); o.BaseShapes = [tst]
         c = op(GC, j, tc, 'Pause_check_groove_' + side, 0, 0, 0)
         c.Source = 'Text'; c.Gcode = ['G0 Z15', 'M5', 'M0', 'M3 S1000', 'G4 P4']
         doc.recompute()
@@ -149,10 +149,10 @@ def run():
 
     jobs = []
     VB, EM = 'v_bit_30gr_0.2mm.fctb', 'endmill_d2mm_h10mm.fctb'
-    j, tc = job('1_Isolation_Top', body, VB, 1, 120, 20, '01_Top_Isolation_V30.nc',
-                'Верх: изоляция, V-бит 30 гр / 0.2, глубина 0.10 (ширина реза 0.254)'); jobs.append(j)
+    j, tc = job('1_Isolation_Top', body, VB, 1, 90, 20, '01_Top_Isolation_V30.nc',
+                'Верх: изоляция, V-бит 30 гр / 0.2, глубина 0.05 (ширина реза 0.227)'); jobs.append(j)
     test_pass(j, tc, 'Top')
-    o = op(GE, j, tc, 'Engrave_Top', 0, -0.10, 0.10, 1.5, 0.5); o.BaseShapes = [grp['top'][2]]; doc.recompute()
+    o = op(GE, j, tc, 'Engrave_Top', 0, -0.05, 0.05, 1.5, 0.5); o.BaseShapes = [grp['top'][2]]; doc.recompute()
 
     j, tc = job('2_Drill_0.3_Vias', body, 'drill_d0.3mm.fctb', 3, 30, 30, '02_Drill_0.3_Vias.nc',
                 'Сверло 0.3: 32 переходных (в Gerber 0.8)'); jobs.append(j)
@@ -166,10 +166,10 @@ def run():
     o.Locations = [V(-6, 20, 0), V(W+6, 20, 0)]
     o.PeckEnabled = True; o.setExpression('PeckDepth', '0.5'); o.setExpression('RetractHeight', '1'); doc.recompute()
 
-    j, tc = job('1_Isolation_Bottom', mir, VB, 1, 120, 20, '04_Bottom_Isolation_V30.nc',
+    j, tc = job('1_Isolation_Bottom', mir, VB, 1, 90, 20, '04_Bottom_Isolation_V30.nc',
                 'Низ, после переворота влево-вправо на штифтах: изоляция'); jobs.append(j)
     test_pass(j, tc, 'Bottom')
-    o = op(GE, j, tc, 'Engrave_Bottom', 0, -0.10, 0.10, 1.5, 0.5); o.BaseShapes = [grp['bottom'][2]]; doc.recompute()
+    o = op(GE, j, tc, 'Engrave_Bottom', 0, -0.05, 0.05, 1.5, 0.5); o.BaseShapes = [grp['bottom'][2]]; doc.recompute()
 
     j, tc = job('4_Contour', mir, EM, 2, 100, 30, '05_Contour_2mm.nc',
                 'Фреза 2 мм: отверстия Q1/Q2, затем контур с перемычками как в HobbyTouristing'); jobs.append(j)

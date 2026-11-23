@@ -10,7 +10,7 @@ from shapely import STRtree
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GB = os.path.join(ROOT, 'Gerber_PCB1_2026-11-22')
 W, H = 99.06, 71.12
-TIP, ANGLE, DEPTH = 0.2, 30.0, 0.10           # v_bit_30gr_0.2mm
+TIP, ANGLE, DEPTH = 0.2, 30.0, 0.05           # v_bit_30gr_0.2mm
 CUT = TIP + 2*DEPTH*math.tan(math.radians(ANGLE/2))
 OFF = 0.149                                    # половина минимального зазора 0.298
 SIMP = 0.004
