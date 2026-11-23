@@ -1,0 +1,18 @@
+{
+  "attribute": {},
+  "id": "512eadb5-cd27-4740-986c-db3cb908d01e",
+  "name": "endmill_d2mm_h10mm",
+  "parameter": {
+    "Chipload": "0.00 mm",
+    "CuttingEdgeHeight": "10.00 mm",
+    "Diameter": "2.00 mm",
+    "Flutes": 4,
+    "Length": "38.00 mm",
+    "Material": "Carbide",
+    "ShankDiameter": "3.00 mm",
+    "SpindleDirection": "Forward"
+  },
+  "shape": "endmill.fcstd",
+  "shape-type": "Endmill",
+  "version": 2
+}

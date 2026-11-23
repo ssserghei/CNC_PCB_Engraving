@@ -1,0 +1,20 @@
+{
+  "attribute": {},
+  "id": "397b68b3-dd71-47db-b966-81a7473cf0ab",
+  "name": "v_bit_30gr_0.2mm",
+  "parameter": {
+    "Chipload": "0.00 mm",
+    "CuttingEdgeAngle": "30.00\u00b0",
+    "CuttingEdgeHeight": "8.00 mm",
+    "Diameter": "3.00 mm",
+    "Flutes": 2,
+    "Length": "27.50 mm",
+    "Material": "Carbide",
+    "ShankDiameter": "3.00 mm",
+    "SpindleDirection": "Forward",
+    "TipDiameter": "0.20 mm"
+  },
+  "shape": "v-bit.fcstd",
+  "shape-type": "VBit",
+  "version": 2
+}
