@@ -21,6 +21,7 @@ for s, cap in (('top', 'TOP'), ('bottom', 'BOTTOM (mirrored, as milled)')):
     f, ax = plt.subplots(figsize=(13, 9.2), dpi=150)
     ax.add_patch(patch(left, fc='#c98b4a', ec='none'))
     ax.plot(*box(-1, -1, W+1, H+1).exterior.xy, color='#1b6ac9', lw=1, ls='--', label='contour, 2 mm end mill centre line')
+    ax.plot(*box(-.5, -.5, W+.5, H+.5).exterior.xy, color="r", lw=.8, label="test pass, V-bit")
     ax.plot(*box(0, 0, W, H).exterior.xy, color='k', lw=0.8, label='board outline 99.06 x 71.12')
     for k, r in (('via', .15), ('pot', .5), ('conn', .5), ('q', 1.0)):
         for x, y in res['holes'][k]: ax.add_patch(Circle((W-x if s == 'bottom' else x, y), r, fc='white', ec='k', lw=.4))
@@ -28,7 +29,7 @@ for s, cap in (('top', 'TOP'), ('bottom', 'BOTTOM (mirrored, as milled)')):
     ax.plot([], [], 'o', mfc='white', mec='r', label='alignment pin holes, 1 mm')
     ax.plot(0, 0, '+', color='r', ms=14, mew=2, label='G54 X0 Y0')
     ax.set_xlim(-13, W+13); ax.set_ylim(-9, H+9); ax.set_aspect('equal'); ax.set_title(cap + ': copper after isolation milling')
-    ax.legend(loc='upper center', bbox_to_anchor=(.5, -.04), ncol=4, frameon=False); f.tight_layout()
+    ax.legend(loc='upper center', bbox_to_anchor=(.5, -.04), ncol=5, frameon=False); f.tight_layout()
     f.savefig(os.path.join(OUT, s + '_milled.png')); plt.close(f)
 j = json.load(open(os.path.join(GB, 'FlyingProbeTesting.json'), encoding='utf8'))
 pins = [dict(zip(j['pins']['fields'], r)) for r in j['pins']['rows']]

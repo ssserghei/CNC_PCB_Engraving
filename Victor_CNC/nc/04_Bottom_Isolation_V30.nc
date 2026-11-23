@@ -1,6 +1,6 @@
 (Exported by FreeCAD)
 (Post Processor: grbl_post)
-(Output Time:2026-11-23 13:46:34.289869)
+(Output Time:2026-11-23 13:52:24.639187)
 (Begin preamble)
 G17 G90
 G21
@@ -15,6 +15,31 @@ G54
 ( M6 T1 )
 M3 S1000
 (Finish operation: TC: v_bit_30gr_0.2mm001)
+(Begin operation: Test_Outline_Bottom)
+(Path: Test_Outline_Bottom)
+(Test_Outline_Bottom)
+G0 Z1.500
+G0 Z1.500
+G0 X-0.500 Y-0.500
+G0 Z0.500
+G1 X-0.500 Y-0.500 Z-0.100 F20.000
+G1 X99.560 Y-0.500 Z-0.100 F120.000
+G1 X99.560 Y71.620 Z-0.100 F120.000
+G1 X-0.500 Y71.620 Z-0.100 F120.000
+G1 X-0.500 Y-0.500 Z-0.100 F120.000
+G0 Z1.500
+(Finish operation: Test_Outline_Bottom)
+(Begin operation: Pause_check_groove_Bottom)
+(Path: Pause_check_groove_Bottom)
+(Pause_check_groove_Bottom)
+(Begin Custom)
+G0 Z15.000
+M5
+M0
+M3 S1000
+G4 P4.0
+(End Custom)
+(Finish operation: Pause_check_groove_Bottom)
 (Begin operation: Engrave_Bottom)
 (Path: Engrave_Bottom)
 (Engrave_Bottom)

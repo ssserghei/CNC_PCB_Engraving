@@ -87,14 +87,17 @@ Coordinates: X0 Y0 = lower left corner of the board, Z0 = copper surface. G54 in
 
 | # | Task | Tool | Depth | Feed XY / Z, mm/min | G-code | Time (FreeCAD estimate) |
 |---|---|---|---|---|---|---|
-| 1 | Isolation, top | V-bit | −0.10 | 120 / 20 | `01_Top_Isolation_V30.nc` | 53 min |
+| 1 | Test rectangle + isolation, top | V-bit | −0.10 | 120 / 20 | `01_Top_Isolation_V30.nc` | 56 min |
 | 2 | Vias, 32 holes | drill 0.3 | −1.85 | — / 30 | `02_Drill_0.3_Vias.nc` | not estimated |
 | 3 | Connectors, terminals, R20 / R21 (160 holes) and 2 alignment holes | drill 1.0 | −2.1 / −6.0 | — / 60 | `03_Drill_1.0_Holes.nc` | not estimated |
-| 1 | Isolation, bottom | V-bit | −0.10 | 120 / 20 | `04_Bottom_Isolation_V30.nc` | 23 min |
+| 1 | Test rectangle + isolation, bottom | V-bit | −0.10 | 120 / 20 | `04_Bottom_Isolation_V30.nc` | 26 min |
 | 4 | Q1 / Q2 holes, then contour with 8 tabs | end mill 2 mm | −2.0, then −1.85 step 0.3 | 100 / 30 | `05_Contour_2mm.nc` | 25 min |
 
 File numbers give the machining order; the first column is the task.
 
+- **Test pass:** both isolation files start with a closed V-bit rectangle at the working depth, 0.5 mm outside the board
+  outline, to check that the laminate is flat. The contour cutter removes it later. Then the tool goes to Z15, the
+  spindle stops and the program waits (`M0`).
 - **Isolation** is a single line in the middle of the gap around each copper island.
 - **Drilling** uses pecks; `G81`/`G83` are translated to `G0`/`G1` because GRBL has no canned cycles.
 - **Gerber diameters changed:** vias 0.8 → 0.3 mm, connectors and terminals 0.8 → 1.0 mm, R20 / R21 0.762 → 1.0 mm.
@@ -106,6 +109,10 @@ File numbers give the machining order; the first column is the task.
 - `M6` is commented out by the post processor: change the tool by hand and set Z0 again for every file.
 
 ## 5. Machining order
+
+At the `M0` pause of files 01 and 04 look at the rectangle: the groove must be continuous and equally wide (0.25 mm) all
+round, and the multimeter must show no contact between the copper inside and outside of it. If not, stop the program,
+correct the fixing or Z0 (or use a height map) and start the file again. If yes, resume; the spindle restarts by itself.
 
 1. Fix the blank on a sacrificial board at least 5 mm thick, top copper up. Set X0 Y0 and Z0.
 2. Run files 01 to 03 and change the tool between files. File 03 also drills the alignment holes at (−6, 20) and
@@ -126,6 +133,7 @@ Safe heights: isolation moves at 1.5 mm, everything else at 5 mm. Keep clamps ou
 | Bottom, same check | 175 islands, 0 shorts, 0 breaks, 0.18 mm² bite at the 0.105 mm place (same net) |
 | Same at 0.227 mm cut (0.05 mm depth) | 0 shorts, 0 breaks on both sides |
 | Hole positions and depths, files 02, 03, 05 | 32, 162 and 6 holes; none extra, missing or of wrong depth |
+| Test rectangle, files 01 and 04 | one closed line, (−0.5, −0.5) to (99.56, 71.62), one `M0` before the isolation |
 | Rapids | no `G0` below Z0 in the isolation files |
 | Project reopened in FreeCAD 1.1 | 5 jobs, no invalid objects |
 
@@ -133,8 +141,9 @@ The simulation uses an ideal cutter on flat copper; it does not cover runout, to
 
 ## 7. Open points
 
-1. **Vias at (69.85, 36.83) and (97.56, 36.83)** carry the load current: Q2 → U3 → U14 → GND passes through both. A wire
-   in a 0.3 mm hole is too thin for that; drilling these two with 1.0 mm is recommended (pad 2.0 mm).
+1. **Vias at (69.85, 36.83) and (97.56, 36.83)** carry the load current: Q2 → U3 → U14 → GND passes through both.
+   **Decision 2026-11-23: they stay 0.3 mm.** Solder the thickest wire that fits, and watch their temperature
+   at the first load test.
 2. **0.3 mm drill:** needs low runout and high spindle speed; the 32 vias need a wire of 0.25 mm or thinner, soldered on
    both sides.
 3. **Component-side soldering** (accepted, board not changed): holes are not plated and the copper of U4, U12, U13, U15,
@@ -146,8 +155,8 @@ The simulation uses an ideal cutter on flat copper; it does not cover runout, to
 
 ## 8. Next steps
 
-1. Decide points 1 and 4 of section 7.
-2. Height map and a test cut of a corner, check the groove width.
+1. Check the terminal pins (section 7, point 4).
+2. Run the test rectangle, check the groove (section 5).
 3. Mill the board; correct feeds and depths.
 
 ## 9. Repository

@@ -16,7 +16,7 @@ def run():
     W, H = g['W'], g['H']; T = 1.6
     doc = App.newDocument('Victor_PCB')
     import Path, Path.Main.Job as PJ, Path.Main.Gui.Job as PJG, Path.Tool.Controller as PTC
-    import Path.Op.Gui.Base as OG, Path.Op.Gui.Engrave as GE, Path.Op.Gui.Drilling as GD, Path.Op.Gui.Profile as GP
+    import Path.Op.Gui.Custom as GC, Path.Op.Gui.Base as OG, Path.Op.Gui.Engrave as GE, Path.Op.Gui.Drilling as GD, Path.Op.Gui.Profile as GP
     import Path.Dressup.Tags as DT, Path.Dressup.Gui.Tags as DGT
     from Path.Tool.camassets import cam_assets
     try: cam_assets.setup()
@@ -45,6 +45,11 @@ def run():
         cu.ViewObject.ShapeColor = (0.85, 0.55, 0.2); cu.ViewObject.DisplayMode = 'Shaded'
         iso.ViewObject.LineColor = (0.1, 0.1, 0.9); iso.ViewObject.PointSize = 1
         cu.ViewObject.Visibility = iso.ViewObject.Visibility = (s == 'top')
+    # пробный проход: прямоугольник на 0.5 мм снаружи платы, его потом съедает контурная фреза
+    m = 0.5
+    tst = doc.addObject('Part::Feature', 'Test_outline'); tst.Label = 'Test_outline_0.5mm_outside'
+    tst.Shape = Part.makePolygon([V(-m, -m), V(W+m, -m), V(W+m, H+m), V(-m, H+m), V(-m, -m)])
+    tst.ViewObject.LineColor = (0.9, 0.1, 0.1)
     body = doc.addObject('PartDesign::Body', 'PCB_Body')
     plane = [f for f in body.Origin.OriginFeatures if 'XY' in f.Name][0]
 
@@ -129,6 +134,12 @@ def run():
             out.append('Face%d' % m[0])
         return out
 
+    def test_pass(j, tc, side):
+        o = op(GE, j, tc, 'Test_Outline_' + side, 0, -0.10, 0.10, 1.5, 0.5); o.BaseShapes = [tst]
+        c = op(GC, j, tc, 'Pause_check_groove_' + side, 0, 0, 0)
+        c.Source = 'Text'; c.Gcode = ['G0 Z15', 'M5', 'M0', 'M3 S1000', 'G4 P4']
+        doc.recompute()
+
     def drill(j, tc, label, keys, rad, final, peck, mirrored=False):
         o = op(GD, j, tc, label, 0, final, peck)
         cl = j.Model.Group[0]
@@ -140,6 +151,7 @@ def run():
     VB, EM = 'v_bit_30gr_0.2mm.fctb', 'endmill_d2mm_h10mm.fctb'
     j, tc = job('1_Isolation_Top', body, VB, 1, 120, 20, '01_Top_Isolation_V30.nc',
                 'Верх: изоляция, V-бит 30 гр / 0.2, глубина 0.10 (ширина реза 0.254)'); jobs.append(j)
+    test_pass(j, tc, 'Top')
     o = op(GE, j, tc, 'Engrave_Top', 0, -0.10, 0.10, 1.5, 0.5); o.BaseShapes = [grp['top'][2]]; doc.recompute()
 
     j, tc = job('2_Drill_0.3_Vias', body, 'drill_d0.3mm.fctb', 3, 30, 30, '02_Drill_0.3_Vias.nc',
@@ -156,6 +168,7 @@ def run():
 
     j, tc = job('1_Isolation_Bottom', mir, VB, 1, 120, 20, '04_Bottom_Isolation_V30.nc',
                 'Низ, после переворота влево-вправо на штифтах: изоляция'); jobs.append(j)
+    test_pass(j, tc, 'Bottom')
     o = op(GE, j, tc, 'Engrave_Bottom', 0, -0.10, 0.10, 1.5, 0.5); o.BaseShapes = [grp['bottom'][2]]; doc.recompute()
 
     j, tc = job('4_Contour', mir, EM, 2, 100, 30, '05_Contour_2mm.nc',
@@ -200,10 +213,10 @@ def run():
         body.ViewObject.Visibility = side == 'top'; mir.ViewObject.Visibility = side == 'bottom'
         if opobj: opobj.ViewObject.Visibility = True
         Gui.updateGui(); v.saveImage(ROOT + '/build/' + fn, 1800, 1300, 'White')
-    show('bottom', jobs[3].Operations.Group[0], 'view_bottom.png')
+    show('bottom', jobs[3].Operations.Group[-1], 'view_bottom.png')
     show('bottom', jobs[4].Operations.Group[-1], 'view_contour.png')
     show('top', jobs[2].Operations.Group[0], 'view_drill.png')
-    show('top', jobs[0].Operations.Group[0], 'view_top.png')
+    show('top', jobs[0].Operations.Group[-1], 'view_top.png')
     doc.saveAs(ROOT + '/Victor_PCB.FCStd')
     log('DONE')
 

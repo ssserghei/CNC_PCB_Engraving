@@ -90,3 +90,10 @@ if __name__ == '__main__':
         top, R, T = -1.2, 1.0, 1.6
         for L in sorted(set(tabs)):
             print(f'контур: перемычек {tabs.count(L)}, ширина сверху {max(0, L-2*R):.2f}, у низа платы {L-2*R+2*(T+top):.2f}, толщина {min(T+top, T+top-max(0, R-L/2)):.2f} мм')
+        for f in ('01_Top_Isolation_V30.nc', '04_Bottom_Isolation_V30.nc'):
+            t = open(os.path.join(src, f), encoding='utf-8').read()
+            parts = re.split(r'(?m)^M0$', t)
+            open(tmp, 'w', encoding='utf-8').write(parts[0])
+            r = cut_from_gcode(tmp)
+            print(f, 'пробный проход: линий', len(r), '| замкнут', r[0].coords[0] == r[0].coords[-1], '| рамка', r[0].bounds,
+                  '| длина', round(r[0].length, 1), '| пауз M0', len(parts) - 1, '| M3 после паузы', 'M3 S1000' in parts[1])
