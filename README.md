@@ -21,6 +21,7 @@ FreeCAD CAM project built from the Gerber data.
 | [FreeCAD project](Victor_CNC/Victor_PCB.FCStd) | Board model, copper, isolation lines, 5 CAM jobs (FreeCAD 1.1) |
 | [G-code](Victor_CNC/nc/) | One file per job, numbered in machining order |
 | [Top after milling](Victor_CNC/out/top_milled.png) · [Bottom after milling](Victor_CNC/out/bottom_milled.png) | Simulated copper, drawn from the cutter paths |
+| [Height map in Candle](Victor_CNC/Heightmap_Candle.md) | Step by step for files 01 and 04, in Russian |
 | [Gerber files](Victor_CNC/Gerber_PCB1_2026-11-22/) | Source data |
 
 ## Board view
@@ -66,7 +67,7 @@ Board data from the Gerber files:
 | Spindle | `S1000`, as in the reference project |
 | Feeds | V-bit 90 / 20 mm/min (reference 120 / 20, XY lowered by a quarter on 2026-11-23); end mill 100 / 30 from the reference; drills 30 (0.3 mm) and 60 (1.0 mm) mm/min are estimates |
 | Isolation depth | 0.05 mm in one pass, as in the reference (decision 2026-11-23, before that 0.10 mm) |
-| Flatness | copper is 0.035 mm thick, so at 0.05 mm depth a spot only 0.015 mm below Z0 stays uncut: **a height map is needed** unless the blank is that flat. The V-bit bites into copper tracks below about 0.18 mm depth  |
+| Flatness | copper is 0.035 mm thick, so at 0.05 mm depth a spot only 0.015 mm below Z0 stays uncut: **a height map is needed** ([Candle procedure, in Russian](Victor_CNC/Heightmap_Candle.md)) unless the blank is that flat. The V-bit bites into copper tracks below about 0.18 mm depth  |
 
 ## 3. Tools
 
@@ -115,11 +116,11 @@ round, and the multimeter must show no contact between the copper inside and out
 correct the fixing or Z0 (or use a height map) and start the file again. If yes, resume; the spindle restarts by itself.
 
 1. Fix the blank on a sacrificial board at least 5 mm thick, top copper up. Set X0 Y0 and Z0.
-2. Run files 01 to 03 and change the tool between files. File 03 also drills the alignment holes at (−6, 20) and
+2. Take the height map and load it for file 01. Run files 01 to 03 and change the tool between files. File 03 also drills the alignment holes at (−6, 20) and
    (105.06, 20), 6 mm deep (about 4.4 mm into the sacrificial board).
 3. Put 1.0 mm pins into the two holes and turn the blank **left to right** (around the Y direction). Keep X0 Y0. The pins
    must not stick out above 3 mm.
-4. Set Z0 on the bottom copper, then run files 04 and 05.
+4. Take a new height map of the bottom, set Z0 on the bottom copper, then run files 04 and 05.
 5. Break the tabs.
 
 Safe heights: isolation moves at 1.5 mm, everything else at 5 mm. Keep clamps outside the blank area used by the paths.
@@ -156,7 +157,7 @@ The simulation uses an ideal cutter on flat copper; it does not cover runout, to
 ## 8. Next steps
 
 1. Check the terminal pins (section 7, point 4).
-2. Run the test rectangle, check the groove (section 5).
+2. Take the height map, run file 01, check the first tracks.
 3. Mill the board; correct feeds and depths.
 
 ## 9. Repository
@@ -166,6 +167,7 @@ The simulation uses an ideal cutter on flat copper; it does not cover runout, to
 | `Victor_CNC/Gerber_PCB1_2026-11-22/`, `.zip` | Gerber, drill and test data from EasyEDA Pro |
 | `Victor_CNC/Victor_PCB.FCStd` | FreeCAD CAM project |
 | `Victor_CNC/nc/` | G-code |
+| `Victor_CNC/Heightmap_Candle.md` | Height map procedure for Candle |
 | `Victor_CNC/ToolBits/` | Tool bits (`.fctb`) |
 | `Victor_CNC/out/` | Pictures of the milled copper |
 | `Victor_CNC/scripts/` | `gerber_parse.py`, `isolation.py` (paths), `build_project.py` (FreeCAD project and G-code), `verify.py` (simulation), `report.py` (pictures) |
